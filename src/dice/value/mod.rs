@@ -194,7 +194,7 @@ pub async fn resolve_dice(
         }
         sum.unwrap_or(RRVal::Int(Integer::ZERO))
     }
-    if lowest_idx == 0 && highest_idx as usize == sides.len() - 1 {
+    if lowest_idx == 0 && highest_idx == num - 1 {
         let mut sum: Option<RRVal> = None;
         for _ in 0..num {
             let sample = if !explode.is_empty() {

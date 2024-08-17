@@ -240,6 +240,9 @@ impl ParseIns for Evaluator {
             None => Ok(1),
         }
         .map_err(|e| anyhow::anyhow!("invalid number of dice: {:?}", e))?;
+        if num == 0 {
+            return Ok(LazyValue::Int(rug::Integer::ZERO));
+        }
         let sides;
         if let LazyValue::Array(a) = sides_raw {
             sides = RRVal::deep_resolve_vec(a, self).await?;
@@ -515,6 +518,13 @@ async fn eval_positive_test() {
     good!("#,4", 1);
     good!("#[1,2,3]", 3);
     good!(r#"#"string""#, 6);
+
+    // - fuzzing-based tests -
+    good!("0d[5,6,7]", 0);
+    // special NaN check lmao
+    let nanres = eval("30d(0/3,0/0,0)").await.unwrap();
+    let RRVal::Float(nanres) = nanres else { panic!("non-NaN value {nanres}") };
+    assert!(nanres.is_nan(), "non-NaN value {nanres}");
 }
 
 #[tokio::test]

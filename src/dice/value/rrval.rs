@@ -322,6 +322,12 @@ impl From<i32> for RRVal {
     }
 }
 
+impl From<f64> for RRVal {
+    fn from(value: f64) -> Self {
+        Self::Float(value.into())
+    }
+}
+
 impl<T> From<Vec<T>> for RRVal
 where
     T: Into<RRVal>,
